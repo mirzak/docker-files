@@ -1,6 +1,6 @@
 FROM gocd/gocd-agent-ubuntu-14.04:v17.8.0
 
-MAINTAINER Mirza Krak "mirza.krak@endian.se"
+MAINTAINER Mirza Krak "mirza@mkrak.org"
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -53,9 +53,5 @@ RUN mkdir -p project
 # Switch to user
 USER ${user}
 WORKDIR ${USER_HOME}
-
-RUN git config --global user.email "mirza.krak@endian.se"
-RUN git config --global user.name "Mirza Krak"
-RUN git config --global push.default simple
 
 CMD ["/bin/bash"]

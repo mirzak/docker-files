@@ -1,5 +1,5 @@
 FROM debian:8
-MAINTAINER Mirza Krak "mirza.krak@endian.se"
+MAINTAINER Mirza Krak "mirza@mkrak.org"
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -46,8 +46,4 @@ USER ${user}
 WORKDIR ${USER_HOME}
 
 RUN mkdir -p project
-
-RUN git config --global user.email "mirza.krak@endian.se"
-RUN git config --global user.name "Mirza Krak"
-RUN git config --global push.default simple
 
