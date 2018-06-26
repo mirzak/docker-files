@@ -1,0 +1,61 @@
+FROM gocd/gocd-agent-ubuntu-14.04:v17.8.0
+
+MAINTAINER Mirza Krak "mirza.krak@endian.se"
+
+ENV DEBIAN_FRONTEND noninteractive
+
+ENV user mirza
+ENV group mirza
+ENV uid 1010
+ENV gid 1010
+
+USER root
+
+# Make sure the package repository is up to date
+RUN apt-get update && apt-get -y dist-upgrade
+
+# Install some packages I cannot live without...
+RUN apt-get -y install dos2unix git mc openssh-server screen tig tree vim strace
+
+# Install the following utilities (required by poky)
+RUN apt-get -y install curl make gcc g++ diffstat texinfo gawk chrpath wget libsdl1.2-dev
+
+# Install extra packages (required for building GDP)
+RUN apt-get -y install gawk wget git-core diffstat unzip texinfo gcc-multilib \
+    build-essential chrpath socat libsdl1.2-dev xterm git-svn
+
+# Make sure tool add-apt-repository is installed
+RUN apt-get -y install software-properties-common
+
+RUN apt-get -y install locales
+
+# Make sure the directory exists, otherwise sshd will not start
+RUN mkdir -p /var/run/sshd
+
+ENV USER_HOME /home/${user}
+
+RUN groupadd -g ${gid} ${group} \
+    && useradd -d "$USER_HOME" -u ${uid} -g ${gid} -m -s /bin/bash ${user}
+
+## Set LOCALE to UTF8
+#
+RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
+    locale-gen en_US.UTF-8 && \
+    dpkg-reconfigure locales && \
+    /usr/sbin/update-locale LANG=en_US.UTF-8
+ENV LC_ALL en_US.UTF-8
+
+# Expose sshd port
+EXPOSE 22
+
+RUN mkdir -p project
+
+# Switch to user
+USER ${user}
+WORKDIR ${USER_HOME}
+
+RUN git config --global user.email "mirza.krak@endian.se"
+RUN git config --global user.name "Mirza Krak"
+RUN git config --global push.default simple
+
+CMD ["/bin/bash"]
